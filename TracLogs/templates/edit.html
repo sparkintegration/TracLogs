@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <xi:include href="layout.html" />
+
+    <head>
+        <title>Logs</title>
+    </head>
+
+    <body>
+        <py:def function="hdf_select(options, name, selected, optional)">
+            <select size="1" id="$name" name="$name">
+                <py:choose test="optional">
+                    <py:when test="True">
+                        <option></option>
+                    </py:when>
+                </py:choose>
+                
+                <py:for each="option in options">
+                    <py:choose test="option">
+                        <py:when test="selected">
+                            <option selected="selected">$option</option>
+                        </py:when>
+                        <py:otherwise>
+                            <option>$option</option>
+                        </py:otherwise>
+                    </py:choose>                    
+                </py:for>
+            </select>
+        </py:def>
+
+        <h1>Logs for the week of $week for $user_name</h1>
+        <div class="changeWeek">
+            <form method="post">
+                <input type="submit" name="changeWeek" value="Go To" />
+                
+                <select name="week">
+                    <py:for each="weekNum in weekNums" >
+                        <?python def weekData():
+                            return str(weeks[weekNum]) ?>
+                        <py:choose test="weekData()">
+                            <py:when test="week">
+                                <option value="$weekNum" selected="selected">Week of ${weeks[weekNum]}</option>
+                            </py:when>
+                            <py:otherwise>
+                                <option value="$weekNum">Week of ${weeks[weekNum]}</option>
+                            </py:otherwise>
+                        </py:choose>
+                    </py:for>
+                </select>
+
+                ${hdf_select(years, 'year', year, 0)}
+                <input type="hidden" name="user_id" value="$user_id"/>
+            </form>
+        </div>
+
+        <div py:choose="">
+            <div py:when="error_msg != ''" class="error">Error output: $error_msg</div>
+         </div>
+
+        <form method="post">
+
+            <input type="submit" name="save" value="Save Changes" id="save_button" />
+            
+            <py:for each="day in days">
+                <input type="hidden" name="logs['$day']['user_id']" value="${logs[day]['user_id']}" />
+                <input type="hidden" name="logs['$day']['log_id']" value="${logs[day]['log_id']}" />
+
+                <table class="listing reports">   
+                    <h2 id="${day}"><A NAME="$day">$day - ${dayNames[day]}</A></h2>
+                    <thead>
+                    <tr>
+                         <th><a href="#">In / Out Clock</a></th>
+                         <th><a href="#">Customer/Project</a></th>
+                         <th><a href="#">Hours</a></th>
+                         <th><a href="#">Notes</a></th>
+                     </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>    
+                            <td rowspan="10" width="170px" nowrap="1">
+
+                                <div class="dayHeader">
+
+                                    <div class="hours">
+                                        <div class="time">
+                                            <span class="label">Start Time:</span>
+                                            <br/>
+                                            <select id="logs['$day']['start_hour']" name="logs['$day']['start_hour']" onChange="return setTotalTimes('$day');">
+                                                <py:for each="hour in hours">
+                                                    <py:choose test="logs[day]['start_hour']">
+                                                        <py:when test="hour">
+                                                            <option value="$hour" selected="selected">$hour</option>
+                                                        </py:when>
+                                                        <py:otherwise>
+                                                            <option value="$hour">$hour</option>
+                                                        </py:otherwise>
+                                                    </py:choose>
+                                                </py:for>
+                                            </select>
+                                            :
+                                            <select id="logs['$day']['start_minute']" name="logs['$day']['start_minute']" onChange="return setTotalTimes('$day');">
+                                                <py:for each="minute in minutes">
+                                                    <py:choose test = "logs[day]['start_minute']">
+                                                        <py:when test = "minute">
+                                                            <option selected="selected">$minute</option>
+                                                        </py:when>
+                                                        <py:otherwise>
+                                                            <option>$minute</option>
+                                                        </py:otherwise>
+                                                    </py:choose>
+                                                </py:for>
+                                            </select>
+                                        </div>
+
+                                        <div class="time">
+                                            <br /><span class="label">Stop Time:</span><br />
+                                            <select id="logs['$day']['stop_hour']" name="logs['$day']['stop_hour']" onChange="return setTotalTimes('$day');">
+                                                <py:for each="hour in hours">
+                                                    <py:choose test="logs[day]['stop_hour']">
+                                                        <py:when test="hour">
+                                                            <option selected="selected">$hour</option>
+                                                        </py:when>
+                                                        <py:otherwise>
+                                                            <option>$hour</option>
+                                                        </py:otherwise>
+                                                    </py:choose>
+                                                </py:for>
+                                            </select>
+                                            :
+                                            <select id="logs['$day']['stop_minute']" name="logs['$day']['stop_minute']" onChange="return setTotalTimes('$day');">
+                                                <py:for each="minute in minutes">
+                                                    <py:choose test = "logs[day]['stop_minute']">
+                                                        <py:when test = "minute">
+                                                            <option selected="selected">$minute</option>
+                                                        </py:when>
+                                                        <py:otherwise>
+                                                            <option>$minute</option>
+                                                        </py:otherwise>
+                                                    </py:choose>
+                                                </py:for>
+                                            </select>
+                                        </div>
+
+                                        <div class="time">
+                                            <br /><span class="label">Off-site Work:</span><br/>
+                                            <select id="logs['$day']['extra']" name="logs['$day']['extra']" onChange="return setTotalTimes('$day');">
+                                                <py:for each="hour in extra_hours">
+                                                    <py:choose test = "logs[day]['extra']">
+                                                        <py:when test = "hour">
+                                                            <option selected="selected">$hour</option>
+                                                        </py:when>
+                                                        <py:otherwise>
+                                                            <option>$hour</option>
+                                                        </py:otherwise>
+                                                    </py:choose>
+                                                </py:for>
+                                            </select>
+                                            
+                                            hours
+                                        </div>
+                                        
+                                        <div class="time" style="margin-top: 10px;">
+                                            Total Hours: <span id="total_worked['$day']" style="font-weight: bold;"></span>
+                                        </div>
+
+                                        <div class="clearingDiv"></div>
+                                    </div>
+                                    <div class="clearingDiv"></div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <div class="clearingDiv"></div>
+                        
+                        <py:for each ="entry in logs[day]['entries']">
+                            
+                            <?python
+			                    def logData(name):
+                                    return str(logs[str(day)]['entries'][entry][name]) ?>
+                            <tr>
+                                <td nowrap="1">
+                                    <div class="removeEntry">
+                                        <input type="submit" name="RemoveEntry_${day}_${entry}" value="-" />
+                                        <input type="hidden" name="logs['${day}']['entries']['${entry}']['log_entry_id']" value="${entry}" />
+                                        <select class="c_select" name="logs['$day']['entries']['${entry}']['customer_id']" id="logs['$day']['entries']['${entry}']['customer_id']" p_id="logs['$day']['entries']['${entry}']['project_id']">
+                                         <py:for each="customer in customers">
+                                            <py:with vars="cid = str(customer.id); l_cid=logData('customer_id')">
+                                            <py:choose test="">
+                                               <py:when test="cid == l_cid">
+                                                  <option value="$customer.id" selected="selected">$customer.name</option>
+                                               </py:when>
+                                               <py:otherwise>
+                                                <option value="$customer.id">$customer.name</option>
+                                               </py:otherwise>
+                                             </py:choose>
+                                             </py:with>
+                                         </py:for>
+                                    </select> 
+                                    <br/>
+                                    ----><select name="logs['$day']['entries']['${entry}']['project_id']" id="logs['$day']['entries']['${entry}']['project_id']" >
+                                            <py:with vars="projectId = logData('project_id')">
+                                               <option value="$projectId" selected="selected"></option>
+                                            </py:with> 
+                                        </select>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="entryTime">
+                                        Time Effort: <br/>
+                                        <input type="text" size="5" length="5" class="entryHour" onChange="return setTotalTimes('$day');" name="logs['$day']['entries']['${entry}']['hours']" value="${logData('hours')}" />
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="notes">
+                                        <span class="label" style="display: block"></span>
+                                        <textarea name="logs['$day']['entries']['${entry}']['notes']" cols="80" rows="5">${logData('notes')}</textarea>
+                                    </div>
+                                </td>
+                               </tr>
+                           </py:for>
+       
+
+                        <tr>
+                               <td nowrap="1">
+                                   <input type="submit" name="AddEntry_$day" value="+" />
+                                   <select class="c_select" name="NewEntryCustomer_$day" id="NewEntryCustomer_$day" p_id="NewEntryProject_$day">                            
+                                     <py:for each="customer in customers">
+                                       <py:choose test="">
+                                         <py:when test="str(customer.id) == str(default_customer)">
+                                           <option value="$customer.id" selected="selected">$customer.name</option>
+                                         </py:when>
+                                         <py:otherwise>
+                                           <option value="$customer.id">$customer.name</option>
+                                         </py:otherwise>
+                                       </py:choose>
+                                     </py:for>
+                                   </select>
+                                   <br/>
+                                   ----><select id="NewEntryProject_$day" name="NewEntryProject_$day">
+                                </select>
+                               </td>
+                               <td>
+                               </td>
+                               <td>
+                               </td>
+                        </tr>
+       			<py:for each="id, data in t_logs[day].items()">
+           			<tr>
+                                <?python def t_logData(id, name):
+		            	        return str(t_logs[str(day)][str(id)][name]) ?>
+                       
+		                <td>
+                            <div class="removeEntry">
+				            Ticket: <a href="$t_base_url/${t_logData(id,'ticket_id')}">${t_logData(id,'ticket_id')}</a><br/>
+				            <b>${t_logData(id, 'ticket_summary')}</b><br/>
+			                <py:choose test="">
+                              <py:when test="t_logData(id,'project_id') != '0'">
+                                Project: <a href="$p_base_url/${t_logData(id,'project_id')}">${t_logData(id,'project_name')}</a><br/>
+                              </py:when>
+                              <py:otherwise>
+                                Project: none<br/>
+                              </py:otherwise>
+                            </py:choose>
+
+                            </div>
+			            </td>
+			            <td>
+			                Time: <br/>
+			                <input type="text" size="3" length="3" class="ticketHour" onChange="return setTotalTimes('$day');" name="logs['tickets']['$day']['${id}'][ticket_time']" value="${t_logData(id,'ticket_time')}" />
+			            </td>       
+			            <td>
+			                <div class="notes">
+				            <span class="label" style="display:block"></span>
+				            <textarea name="logs['tickets']['$day']['${id}']['time_comments']" cols="80" rows="3">${t_logData(id,'time_comments')}</textarea>
+				            </div>
+			            </td>
+			        </tr>
+                </py:for>
+                    <tr>
+                        <td id="warning['$day']" class="calcBad" >
+                        </td>
+                        <td align="right">
+                          Ticket Hours: <span id="ticketTotal['$day']" style="font-weight: bold;"></span><br/>
+                          Total Hours: <span id="total_claimed['$day']" style="font-weight: bold;"></span>
+                        </td>
+                    </tr>
+
+                    </tbody>            
+                </table>
+                <br/>
+            <script>
+             setTotalTimes('$day');
+            </script>
+        
+            </py:for>
+        
+            <input type="submit" name="save" value="Save Changes" id="save_button" />
+
+        </form>
+    </body>
+    
+    <script>
+        if ("${anchor}" != "")
+        {
+            location.href = "#${anchor}";
+        }
+        
+    </script>
+</html>

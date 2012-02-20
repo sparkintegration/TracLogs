@@ -1,0 +1,160 @@
+tbody.top {
+    vertical-align: top;
+    }
+
+div.time {
+    text-align: left;
+}
+
+div.day {
+    width: 900px;
+}
+
+div.dayHeader {
+   
+}
+
+td.calcEmpty {
+    background-color: transparent;
+    }
+
+td.calcGood {
+    background-color: green;
+    }
+
+td.calcBad {
+    background-color: red;
+    }
+
+
+div.logEntry {
+    border: 1px solid black;
+    background-color: lightgray;
+}
+
+div.removeEntry {
+}
+
+div.error {
+    background-color: #F99;
+    border: 1px dashed black;
+    width: 300px;
+    align: center;
+    margin-top: 50px;
+    padding: 10px;
+    text-align: center;
+}
+
+div.projectEntry {
+    border: 1px solid gray;
+}
+
+div.clearingDiv {
+    clear: both;
+}
+
+div.notes {
+    padding: 0px 10px 0px 10px;
+	margin: 0px 0px 10px 0px;
+	width: 700px;
+}   
+
+div.hours {
+    float: left;
+    width: 75%;
+}
+
+div.changeWeek {
+    float: right;
+    display: inline;
+}
+
+span.label {
+
+}
+
+input#save_button {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+//
+
+.entryTime
+{
+   	padding: 0px 10px 0px 10px;
+	margin: 0px 0px 10px 0px;
+	width: 300px;
+}
+
+.date_selection
+{
+    margin-top: 10px;
+}
+
+.report_users
+{
+    margin-top: 10px;
+}
+
+.report_projects
+{
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+//
+
+h1 
+{
+	margin: 10px 0px 5px 0px;
+
+ 	font-family: arial,verdana,'Bitstream Vera Sans',helvetica,sans-serif;
+ 	font-weight: bold;
+ 	letter-spacing: -0.018em;
+}	
+
+.reportLogEntry
+{
+
+}
+
+.reportLogDate
+{
+	font-style: italic;
+}
+
+div.userDetails
+{
+	padding: 0px 10px 0px 10px;
+	margin: 0px 0px 10px 0px;
+	width: 700px;	
+}
+
+.monthlyTotal
+{
+	font-weight: bold;
+	font-size: 12px;
+	margin: 0px 0px 10px 0px;
+}
+
+.weeklyTotal
+{
+		font-size: 12px;
+}
+
+.projectTitle
+{
+    text-decoration: underline;
+	font-size: 12px;
+}
+
+.userTitle
+{
+    margin: 10px 0px 5px 0px;
+	padding: 0px;
+	font-weight: normal;
+    margin-top: 1em;
+
+}
+

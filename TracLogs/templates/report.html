@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<?python 
+def get_week(name):
+    if name in project['weeks']:
+        return str(project['weeks'][name])
+    else:
+        return 0 
+?>
+
+<?python 
+def get_total():
+    return str(project['total']) 
+?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <xi:include href="layout.html" />
+
+    <head>
+        <title>Logs</title>
+    </head>
+    
+    <body>
+        <h1>Monthly Log Report</h1>
+        
+        <div id="description">
+            <p>The following report was generated on ${today} for work during ${report_date} for ${user_filter} who worked on projects ${project_filter}.</p>
+        </div>
+        <py:for each="user_id, user in userData.items()">
+            <div class="user">
+                <h1 class="userTitle">${users[user_id]}</h1>
+                
+                <table class="listing reports">
+                    <thead>
+                        <tr>
+                            <th><a href="#">Project</a></th>
+                            <th><a href="#">Hours</a></th>
+                            <th><a href="#">Notes</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <div class="projectSummaries">
+                            <py:for each="project_id, project in user['projects'].items()">
+                                <div py:choose="">
+                                    <div py:when="project['total'] > 0">
+                                        <tr>
+                                            <td>
+                                                <div class="projectTitle">
+                                                    ${projectInfo['%s' % project_id].name}
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="projectSummary">
+                                                    <div class="monthlyTotal">
+                                                        <span class="monthlyTotalLabel">Total hours: </span>
+                                                        ${project['total']}
+                                                    </div>
+
+                                                    <py:for each="week in weeks">
+                                                        <div class="weeklyTotal">
+                                                            <span class="weekLabel">Week of $week: </span>
+                                                                
+                                                            <py:choose test = "get_week(week)">
+                                                                <py:when test = "0">0</py:when>
+                                                                <py:otherwise>${project['weeks'][week]}</py:otherwise>
+                                                            </py:choose>
+                                                        </div>
+                                                    </py:for>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="userDetails">
+                                                    <py:for each="entry in user['logs'][project_id]">
+                                                        <div class="reportLogEntry">
+                                                            
+                                                                <div class="reportLogDate">
+                                                                    <span class="reportDate">${entry[0]}</span> 
+                                                                
+                                                                </div>
+                                                                <div class="reportNotes">${wiki_to_html(context, entry[2])}</div>
+                                                            
+                                                        </div>
+                                                    </py:for>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                    </div>
+                                 </div>
+                            </py:for>
+                        </div>
+                        
+                        
+
+                    </tbody>
+                </table>
+            </div>
+        </py:for>
+        
+    </body>
+</html>

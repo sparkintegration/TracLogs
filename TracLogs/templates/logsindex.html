@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <xi:include href="layout.html" />
+
+    <head>
+        <title>Logs</title>
+    </head>
+    
+    <body>
+        <py:def function="dict_select(options, name, selected, optional,project_id='')">
+            <select class="$name" size="1" id="$name" name="$name" no_dis="1" p_id="$project_id">
+                
+                <py:for each="option in options">
+                    <py:choose test = "option.id">
+                        <py:when test = "selected">
+                            <option value="$option.id" selected="selected">$option.name</option>
+                        </py:when>
+                        <py:otherwise>
+                            <option value="$option.id">$option.name</option>
+                        </py:otherwise>
+                    </py:choose>                    
+                </py:for>
+               
+                <py:choose test="optional">
+                    <py:when test="True">
+                        <option>ALL</option>
+                    </py:when>
+                </py:choose>
+            </select>
+        </py:def> 
+
+        <py:def function="hdf_select(options, name, selected, optional)">
+            <select size="1" id="$name" name="$name">
+                
+                <py:for each="option in options">
+                    <py:choose test = "option">
+                        <py:when test = "selected">
+                            <option selected="selected">$option</option>
+                        </py:when>
+                        <py:otherwise>
+                            <option>$option</option>
+                        </py:otherwise>
+                    </py:choose>                    
+                </py:for>
+                
+                <py:choose test="optional">
+                    <py:when test="True">
+                        <option>ALL</option>
+                    </py:when>
+                </py:choose>
+            </select>
+        </py:def>                
+        
+        <br/>
+        
+        <h1>My Log This Week</h1>
+            <ul class="userList">
+                  <li>
+                <a href="$base_url/edit/$user/$year/$curWeek">$user</a>
+                  </li>
+                </ul>
+    
+        
+        <h1>Individual User Logs</h1>
+        
+        <ul class="userList">
+            <li py:for="user in users">
+                <a href="$base_url/edit/$user.user_id/$year/$curWeek">$user.name</a>
+            </li>
+        </ul>
+        
+        <py:if test="reports_enabled">
+            <br/><hr/><br/>
+           
+            <h1>Reports</h1>
+            
+            Create a report that matches the following criteria.
+            
+            <br/><hr/><br/>
+            
+            <form method="post" action="logs/report_C">
+            Create a <b>Customer Report</b> for: <br/>
+            ${dict_select(customers,'customer',customer,0)}
+            during 
+            ${hdf_select(months, 'month',month,1)}
+            ${hdf_select(years, 'year', year,0)}
+            <br/>
+            <input type="submit" name="generate" value="Generate Report" />
+            </form>
+            
+            <hr/>
+            
+            <form method="post" action="logs/report_P">
+              Create a <b>Project Report</b> for: <br/>
+              <table>
+              <tr>
+              <td align="right">Customer:</td>
+              <td align="left">
+                ${dict_select(customers,'p_customer',customer,0,'p_projects')} 
+              </td>
+              </tr>
+              <tr>
+              <td align="right">Project:</td>
+              <td align="left">
+                <select id="p_projects" name="project">
+                  <option value="0">---</option>
+                </select>
+              </td>
+              </tr>
+              <tr>
+              <td align="right">between</td>
+              <td align="left">
+              ${hdf_select(months, 'start_month',month,0)}
+              ${hdf_select(years, 'start_year', year,0)}
+              and
+              ${hdf_select(months, 'end_month',month,0)}
+              ${hdf_select(years, 'end_year', year,0)}
+              </td>
+              </tr>
+              <tr>
+              <td>
+              <input type="submit" name="generate" value="Generate Report" />
+              </td>
+              </tr>
+              </table>
+            </form>
+            <hr/>
+
+            <form method="post" action="logs/report_U">
+                Create a <b>User Report</b> for
+                ${dict_select(users,'user',user,0)}
+                between
+                 ${hdf_select(months, 'start_month', month, 0)}
+                 ${hdf_select(years, 'start_year', year, 0)}
+                and
+                 ${hdf_select(months, 'end_month', month, 0)}
+                 ${hdf_select(years, 'end_year', year, 0)}
+                <br/>
+                <br/>
+                <input type="submit" name="generate" value="Generate Report" />
+            </form>
+
+<br/><hr/><br/>
+            
+            <form method="post" action="logs/report_B">
+                Create a <b>Missing Log</b> Report for
+                <fieldset>
+                <input type="checkbox" class="parentCheckBox" />ALL <br/>
+                <py:for each="user in users">
+                     <label for="$user.user_id">
+                     &nbsp;<input type="checkbox" class="childCheckBox" value="$user.user_id" name="users" id="$user.user_id" />$user.name<br/>
+                     </label>
+                </py:for>
+                </fieldset>
+                between
+                 ${hdf_select(months, 'start_month', month, 0)}
+                 ${hdf_select(years, 'start_year', year, 0)}
+                and
+                 ${hdf_select(months, 'end_month', month, 0)}
+                 ${hdf_select(years, 'end_year', year, 0)}
+                <br/>
+                <br/>
+                <input type="submit" name="generate" value="Generate Report" />
+            </form>
+
+<br/><hr/><br/>
+
+<a href="#" class="inactive">Show/Hide old Report</a>
+
+<div class="inactive" style="display: none;">
+    <form method="post" action="logs/report">
+                <div class="date_selection">
+                    <i>During the month of:</i>
+                    <br/>
+                    ${hdf_select(months, 'month', month, 1)}
+                    ${hdf_select(years, 'year', year, 0)}
+                </div>
+                <div class="report_users">
+                <i>Work performed by:</i>
+                <table>
+                  <tbody class="top">
+                   <tr>
+                    <td>
+                    <fieldset>
+                    <input type="checkbox" class="parentCheckBox" />ALL <br/>
+                    <py:for each="user in users">
+                        <label for="$user.user_id">
+                        &nbsp;<input type="checkbox" class="childCheckBox" value="$user.user_id" name="users" id="$user.user_id" />$user.name<br/>
+                        </label>
+                    </py:for>
+                    </fieldset>
+                    </td>
+                    <td>
+                    <fieldset>
+                    <py:for each="user in users_report">
+                        <input type="checkbox" value="$user.user_id" name="users" />$user.name<br/>
+                    </py:for>
+                    </fieldset>
+                    </td>
+                  </tr>
+                  </tbody>
+                  </table>
+                </div>
+                <div class="report_projects">
+                   <i>For projects:</i>
+                    <fieldset>
+                    <input type="checkbox" class="parentCheckBox" />All <br/>
+                    <py:for each="project in projects">
+                        &nbsp;<input type="checkbox" class="childCheckBox" value="${project['id']}" name="projects" />${project['name']}<br/>
+                    </py:for>
+              </fieldset> 
+                </div>
+                
+                <input type="submit" name="generate" value="Generate Report" />
+            </form>
+          </div>
+        </py:if>
+        <br/><br/>
+    </body>
+</html>

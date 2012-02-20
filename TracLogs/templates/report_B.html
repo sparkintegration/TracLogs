@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <xi:include href="layout.html" />
+
+    <head>
+        <title>Logs</title>
+    </head>
+    
+    <body>
+        <h1>User Log Report</h1>
+        
+        <div id="description">
+            <p>The following report was based on data between ${report_date}.</p>
+        </div>
+        
+        <h2>Missing Logs</h2>
+
+        <table id="report" class="listing reports" style="width:380px">
+        <thead>
+            <tr>
+                <th width="120px"><a href="#">User</a></th>
+                <th width="80px"><a href="#">Day</a></th>
+            </tr>
+        </thead>
+        <tbody>
+
+        <?python 
+            def dateUrl(date):
+                return str(dateCodes[date]) ?>
+        <py:for each="user,dayInfo in userData.items()"> 
+        <tr>
+            <td nowrap="1" >
+                <b>User: $user </b><br/>
+            </td>
+            <td> 
+            <py:for each="date in dayInfo">
+                <py:with vars="dayUrl = dateUrl(date)">
+                <a href="$base_url/edit/$user/$dayUrl">$date</a> <br/> 
+                </py:with>
+            </py:for>  
+            </td>
+         </tr>
+        </py:for>
+        </tbody>
+      </table>
+</body>
+
+</html>

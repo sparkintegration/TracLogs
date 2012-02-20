@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <xi:include href="layout.html" />
+
+    <head>
+        <title>Logs</title>
+    </head>
+    
+    <body>
+        <h1>Customer Monthly Log Report</h1>
+        
+        <div id="description">
+            <p>The following report was generated on ${today} based on the month of ${report_date}.</p>
+        </div>
+        
+        <h2>Customer: ${customer['name']}</h2>
+
+        <table id="report" class="listing reports">
+        <thead>
+            <tr>
+                <th><a href="#">Project</a></th>
+                <th><a href="#">User</a></th>
+                <th><a href="#">Tickets</a></th>
+                <th><a href="#">Logs</a></th>
+            </tr>
+        </thead>
+        <tbody>
+
+        <py:for each="project_id, projectData in reportData.items()">
+               <tr>
+               <td nowrap="1" rowspan="${projectData['user_count']}">
+                <b>${projectData['name']}</b><br/><br/>
+                Log Hours: ${projectData['log_hours']} <br/>
+                Ticket Hours: ${projectData['ticket_hours']} <br/>
+                <br/> 
+                Total Project Hours: ${projectData['total_hours']} <br/>
+                Project Budget: ${projectData['budget_hours']} <br/>
+                
+                <py:choose test="1">
+                  <py:when test="projectData['remaining_hours'] > 0">
+                    Project Time Left: ${projectData['remaining_hours']}<br/>
+                  </py:when> 
+                  <py:otherwise>
+                    <font color="red">Project Time Left: ${projectData['remaining_hours']}</font><br/>
+                  </py:otherwise>
+                </py:choose>
+                </td>
+                <py:for each="user, user_data in projectData['users'].items()">
+                <tr>                
+                <td nowrap="1">
+                  <b>$user</b>
+                  <br/>
+                  <br/>* User Log Hours: ${user_data['user_log_hours']}
+                  <br/>* User Ticket Hours: ${user_data['user_ticket_hours']}
+                  <br/>* User Total Hours: ${user_data['user_total_hours']}
+                </td>
+                 <td>
+                    <py:for each="ticket, ticketData in user_data['tickets'].items()">
+                      Ticket: <a href="$ticket_url/$ticket">#${ticket}</a>: ${ticketData['ticket_summary']} <br/>
+                      Hours: ${ticketData['ticket_time']} <br/>
+                      Comments: <br/>
+                       <py:for each="comment in ticketData['ticketData']">
+                        ** $comment <br/>
+                       </py:for>
+                     <br/>
+                  </py:for>
+                  
+                  </td>
+                  
+                  <td>  
+                   <py:for each="date, time_notes in user_data['dates'].items()">
+                     <a href="${time_notes[0]}">$date</a>  <br/>
+                     <py:for each="time_note in time_notes[1]"> 
+                       Hours: ${time_note[1]}
+                       ${wiki_to_html(context, time_note[0])}
+                     </py:for>  
+                   </py:for>  
+                  </td> 
+                </tr>
+                </py:for>
+             </tr>
+        </py:for>
+        </tbody>
+      </table>
+</body>
+
+</html>
