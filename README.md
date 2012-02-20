@@ -1,4 +1,4 @@
-CustProj
+TracLogs
 ========
 
 A plugin to manage daily logs and create reports against customers and projects.
