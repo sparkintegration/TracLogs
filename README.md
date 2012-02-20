@@ -6,12 +6,12 @@ A plugin to manage daily logs and create reports against customers and projects.
 Dependencies
 ------------
 
-CustProj - https://github.com/sparkintegration/CustProj
-FeedParser (pip install FeedParser)
-ComponentDependencyPlugin - http://trac-hacks.org/wiki/ComponentDependencyPlugin
-TicketSidebarProviderPlugin - http://trac-hacks.org/wiki/TicketSidebarProviderPlugin
-TracHoursPlugin - http://trac-hacks.org/wiki/TracHoursPlugin
-TracSqlHelperScript - http://trac-hacks.org/wiki/TracSqlHelperScript
+* CustProj - https://github.com/sparkintegration/CustProj
+* FeedParser (pip install FeedParser)
+* ComponentDependencyPlugin - http://trac-hacks.org/wiki/ComponentDependencyPlugin
+* TicketSidebarProviderPlugin - http://trac-hacks.org/wiki/TicketSidebarProviderPlugin
+* TracHoursPlugin - http://trac-hacks.org/wiki/TracHoursPlugin
+* TracSqlHelperScript - http://trac-hacks.org/wiki/TracSqlHelperScript
 
 Installation
 ------------
