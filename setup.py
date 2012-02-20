@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'TracLogs', version = '0.1',
-    author = 'Tony Angerilli', author_email = 'tony.angerilli@sparkrobotics.com',
+    author = 'Tony Angerilli', author_email = 'tony.angerilli@sparkintegration.com',
     url = 'none',
     description = 'Manages daily logs and hours through Trac',
     license = 'BSD',
