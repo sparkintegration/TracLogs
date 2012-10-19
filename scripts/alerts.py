@@ -66,7 +66,7 @@ def check_logs(config, db):
         alert_time_str = config.get('users', user)
         alert_time = datetime.time(*[int(i) for i in alert_time_str.split(":")])
         date = datetime.datetime.now().date()
-        if current_time.hour == alert_time.hour and date.weekday():
+        if current_time.hour == alert_time.hour and date.weekday() < 5:
             missing = check_missing(db, user, date)
             if missing:
                 print "alert!"
